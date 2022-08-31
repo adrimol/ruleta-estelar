@@ -55,11 +55,19 @@ public class RuletaController {
                   + " próximo giro</strong></p>   \n"
                   + "        <input type=\"number\" id=\"numero\" name=\"numero\" required"
                   + " min=\"1\" max=\"54\" >\n"
-                  + "        <button type=\"button\">Jugar</button>\n"
+                  + "        <button type=\"button\" id=\"btnJugar\">Jugar</button>\n"
                   + "      </div>\n"
                   + "    </div>\n"
+                  + "    <script>\n"
+                  + "\t\tdocument.getElementById('btnJugar').addEventListener(\"click\","
+                  + " function(e) {\n"
+                  + "\t\t\tvar message = \"A jugar Estelares!\";\n"
+                  + "            var domain = 'https://ruleta-estelar.herokuapp.com';\n"
+                  + "\t\t\tparent.postMessage(message,domain); //sending the message\n"
+                  + "\t\t}, false);\n"
+                  + "    </script>\n"
                   + "  </body>\n"
-                  + "</html>\n");
+                  + "</html>");
     } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
     }
