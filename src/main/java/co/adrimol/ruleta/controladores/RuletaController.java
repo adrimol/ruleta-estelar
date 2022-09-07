@@ -133,12 +133,10 @@ public class RuletaController {
                   + "    <script>\n"
                   + "\t\tdocument.getElementById('btnJugar').addEventListener(\"click\","
                   + " function(e) {\n"
-                  + "var message = 'A ganar Estelares!';var domain ="
-                  + " 'https://ruleta-estelar.herokuapp.com';parent.postMessage(message,domain);"
-                  + " //sending the message}, false);\n"
-                  + "    </script>\n"
-                  + "  </body>\n"
-                  + "</html>");
+                  + "   var message = 'A ganar Estelares!';\n"
+                  + "   var domain = 'https://ruleta-estelar.herokuapp.com';\n"
+                  + "   parent.postMessage(message,domain);\n"
+                  + "  }, false);    </script>  </body></html>");
     } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
     }
@@ -220,7 +218,6 @@ public class RuletaController {
                   + "\tparent.postMessage(message,domain); //sending the message\n"
                   + "  };\n"
                   + "  </script>\n"
-                  + "\n"
                   + "</body>\n"
                   + "</html>\n");
     } catch (Exception e) {
