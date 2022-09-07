@@ -81,7 +81,7 @@ public class RuletaController {
     }
   }
 
-  @GetMapping("/iframes/gametest")
+  @GetMapping("/test/game")
   @ResponseBody
   public ResponseEntity getRuletaTest(RequestEntity<String> requestEntity) {
     try {
@@ -133,16 +133,8 @@ public class RuletaController {
                   + "    <script>\n"
                   + "\t\tdocument.getElementById('btnJugar').addEventListener(\"click\","
                   + " function(e) {\n"
-                  + "\t\t\tvar message = {\n"
-                  + "        ready: true,\n"
-                  + "        keyboard_input : {\n"
-                  + "            enable : true,\n"
-                  + "            key : \"count\",\n"
-                  + "            type: \"int\"\n"
-                  + "        }\n"
-                  + "      }\n"
-                  + ";\n"
-                  + "            var domain = 'https://ruleta-estelar.herokuapp.com';\n"
+                  + "\t\t\tvar message = \"A ganar Estelares\"            var domain ="
+                  + " 'https://ruleta-estelar.herokuapp.com';\n"
                   + "\t\t\tparent.postMessage(message,domain); //sending the message\n"
                   + "\t\t}, false);\n"
                   + "    </script>\n"
@@ -195,9 +187,9 @@ public class RuletaController {
     }
   }
 
-  @GetMapping("/iframes/test")
+  @GetMapping("/test/administrative")
   @ResponseBody
-  public ResponseEntity getTest(RequestEntity<String> requestEntity) {
+  public ResponseEntity getTestAdmin(RequestEntity<String> requestEntity) {
     try {
       return ResponseEntity.status(HttpStatus.OK)
           .body(
@@ -218,7 +210,7 @@ public class RuletaController {
                   + "}, false);\n"
                   + "</script>\n"
                   + "\n"
-                  + "<iframe src=\"https://ruleta-estelar.herokuapp.com/iframes/gametest\""
+                  + "<iframe src=\"https://ruleta-estelar.herokuapp.com/test/game\""
                   + " title=\"Ruleta Estelar\"\n"
                   + "height=500 width=500 onload=\"onRuletaLoaded(this)\">\n"
                   + "</iframe>\n"
