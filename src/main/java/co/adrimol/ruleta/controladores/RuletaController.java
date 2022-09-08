@@ -232,7 +232,7 @@ public class RuletaController {
     try {
       return ResponseEntity.status(HttpStatus.OK)
           .body(
-              "\"{"
+              "{"
                   + "\"payorder\":"
                   + " \"ef41d3ac-2e4f-11ed-a261-0242ac120002\","
                   + "\"competitors\": ["
@@ -244,7 +244,7 @@ public class RuletaController {
                   + "     \"event_datetime\": \"2022-09-15 23:50:55.999 -0500\""
                   + "    }"
                   + "  ]"
-                  + "}\";");
+                  + "}");
     } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
     }
