@@ -244,6 +244,7 @@ public class RuletaController {
   @ResponseBody
   public ResponseEntity generatePayOrder(RequestEntity<String> requestEntity) {
     try {
+      System.out.println("generatePayOrder -> requestEntity: " + requestEntity);
       return ResponseEntity.status(HttpStatus.OK)
           .body(
               "{"
@@ -260,6 +261,8 @@ public class RuletaController {
                   + "  ]"
                   + "}");
     } catch (Exception e) {
+      e.printStackTrace();
+      System.out.println("generatePayOrder -> Exception: " + e.getMessage());
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
     }
   }
