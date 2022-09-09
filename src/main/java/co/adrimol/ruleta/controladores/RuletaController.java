@@ -15,9 +15,7 @@ public class RuletaController {
   @ResponseBody
   public ResponseEntity getRuleta(RequestEntity<String> requestEntity) {
     try {
-      System.out.println("getRuleta -> requestEntity: " + requestEntity);
-      log.info("Info log");
-      log.debug("Debug log");
+      log.info("getRuleta -> requestEntity: {}", requestEntity);
       return ResponseEntity.status(HttpStatus.OK)
           .body(
               "<!DOCTYPE html>\n"
@@ -249,7 +247,7 @@ public class RuletaController {
   @ResponseBody
   public ResponseEntity generatePayOrder(RequestEntity<String> requestEntity) {
     try {
-      System.out.println("generatePayOrder -> requestEntity: " + requestEntity);
+      log.info("generatePayOrder -> requestEntity: {}", requestEntity);
       return ResponseEntity.status(HttpStatus.OK)
           .body(
               "{"
@@ -276,6 +274,7 @@ public class RuletaController {
   @ResponseBody
   public ResponseEntity confirmPayOrder(RequestEntity<String> requestEntity) {
     try {
+      log.info("confirmPayOrder -> requestEntity: {}", requestEntity);
       return ResponseEntity.status(HttpStatus.OK)
           .body("<html><body>Pay Order confirmation disabled!</body></html>");
     } catch (Exception e) {
