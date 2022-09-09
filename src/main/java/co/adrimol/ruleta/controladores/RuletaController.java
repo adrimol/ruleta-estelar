@@ -243,40 +243,40 @@ public class RuletaController {
     }
   }
 
-  @PatchMapping("/api/payorder/generate")
+  @PatchMapping(path = "/api/payorder/generate", produces = "application/json")
   @ResponseBody
   public ResponseEntity generatePayOrder(RequestEntity<String> requestEntity) {
     try {
       log.info("generatePayOrder -> requestEntity: {}", requestEntity);
-      return ResponseEntity.status(HttpStatus.OK)
-          .body(
-              "{"
-                  + "\"payorder\":"
-                  + " \"ef41d3ac-2e4f-11ed-a261-0242ac120002\","
-                  + "\"competitors\": ["
-                  + "   {"
-                  + "     \"name\": \"nombre\","
-                  + "     \"id_competitor\": 2,"
-                  + "     \"category_code\": \"categoria\","
-                  + "     \"price\": 4.50,"
-                  + "     \"event_datetime\": \"2022-09-15 23:50:55.999 -0500\""
-                  + "    }"
-                  + "  ]"
-                  + "}");
+      String body =
+          "{"
+              + "\"payorder\":"
+              + " \"ef41d3ac-2e4f-11ed-a261-0242ac120002\","
+              + "\"competitors\": ["
+              + "   {"
+              + "     \"name\": \"nombre\","
+              + "     \"id_competitor\": 2,"
+              + "     \"category_code\": \"categoria\","
+              + "     \"price\": 4.50,"
+              + "     \"event_datetime\": \"20/09/2022 23:50:55\""
+              + "    }"
+              + "  ]"
+              + "}";
+      log.info("generatePayOrder -> body: {}", body);
+      return ResponseEntity.status(HttpStatus.OK).body(body);
     } catch (Exception e) {
       e.printStackTrace();
-      System.out.println("generatePayOrder -> Exception: " + e.getMessage());
+      log.error("generatePayOrder -> Exception: {}", e.getMessage());
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
     }
   }
 
-  @PostMapping("/api/payorder/confirm")
+  @PostMapping(path = "/api/payorder/confirm", produces = "application/json")
   @ResponseBody
   public ResponseEntity confirmPayOrder(RequestEntity<String> requestEntity) {
     try {
       log.info("confirmPayOrder -> requestEntity: {}", requestEntity);
-      return ResponseEntity.status(HttpStatus.OK)
-          .body("<html><body>Pay Order confirmation disabled!</body></html>");
+      return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
     } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
     }
