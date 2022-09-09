@@ -63,7 +63,7 @@ public class RuletaController {
                   + " {\n"
                   + "   var message = {\n"
                   + "    game_service_request: [{\n"
-                  + "       cantidad : ,\n"
+                  + "       cantidad : 1,\n"
                   + "       numero : document.querySelector('input#numero').value\n"
                   + "    }],\n"
                   + "    game_option_data: {\n"
