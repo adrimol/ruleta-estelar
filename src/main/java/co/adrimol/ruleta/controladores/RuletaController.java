@@ -1,5 +1,6 @@
 package co.adrimol.ruleta.controladores;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -7,12 +8,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
+@Slf4j
 public class RuletaController {
 
   @GetMapping("/iframes/game")
   @ResponseBody
   public ResponseEntity getRuleta(RequestEntity<String> requestEntity) {
     try {
+      System.out.println("getRuleta -> requestEntity: " + requestEntity);
+      log.info("Info log");
+      log.debug("Debug log");
       return ResponseEntity.status(HttpStatus.OK)
           .body(
               "<!DOCTYPE html>\n"
