@@ -250,7 +250,7 @@ public class RuletaController {
       log.info("generatePayOrder -> requestEntity: {}", requestEntity);
       String body =
           "{"
-              + "\"payorder\":"
+              + "\"payorder_serial\":"
               + " \"ef41d3ac-2e4f-11ed-a261-0242ac120002\","
               + "\"competitors\": ["
               + "   {"
