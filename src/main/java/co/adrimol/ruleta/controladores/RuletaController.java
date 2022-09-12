@@ -249,7 +249,8 @@ public class RuletaController {
     try {
       log.info("generatePayOrder -> requestEntity: {}", requestEntity);
       String body =
-          "{"
+          "{ \"message\": \"No message\","
+              + "\"data\": {"
               + "\"payorder_serial\":"
               + " \"ef41d3ac-2e4f-11ed-a261-0242ac120002\","
               + "\"competitors\": ["
@@ -261,6 +262,7 @@ public class RuletaController {
               + "     \"event_datetime\": \"20/09/2022 23:50:55\""
               + "    }"
               + "  ]"
+              + "}"
               + "}";
       log.info("generatePayOrder -> body: {}", body);
       return ResponseEntity.status(HttpStatus.OK).body(body);
