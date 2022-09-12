@@ -258,7 +258,7 @@ public class RuletaController {
               + "\"competitors\": ["
               + "   {"
               + "     \"id\": 1234,"
-              + "     \"event_datetime\": \"20/09/2022 23:50:55\","
+              + "     \"event_datetime\": \"20/09/22 23:50:55\","
               + "     \"code\": \"1\","
               + "     \"price\": 4.50,"
               + "     \"alias\": \"myAlias\""
