@@ -1,6 +1,11 @@
 package co.adrimol.ruleta.controladores;
 
+import co.adrimol.ruleta.entidades.Result;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -64,11 +69,12 @@ public class RuletaController {
                   + "    <script>\n"
                   + " document.getElementById('btnJugar').addEventListener(\"click\",   function(e)"
                   + " {\n"
+                  + "   var uuid = crypto.randomUUID();\n"
                   + "   var message = {\n"
                   + "    game_service_request: [{\n"
                   + "       cantidad : 1,\n"
-                  + "       numero : document.querySelector('input#numero').value\n"
-                  + "    }],\n"
+                  + "       numero : document.querySelector('input#numero').value,\n"
+                  + "       id: uuid    }],\n"
                   + "    game_option_data: {\n"
                   + "         giro_info: {\n"
                   + "                 giro_id: crypto.randomUUID(),\n"
@@ -248,20 +254,40 @@ public class RuletaController {
   public ResponseEntity generatePayOrder(RequestEntity<String> requestEntity) {
     try {
       log.info("generatePayOrder -> requestEntity: {}", requestEntity);
+      JSONObject json = new JSONObject(requestEntity.getBody());
+      Object uuid = json.get("id");
+      log.info("generatePayOrder -> uuid: {}", uuid);
+      DateFormat formatter = new SimpleDateFormat("dd/MM/yy hh:mm:ss");
+      String fechaActual = formatter.format(new Date());
+      log.info("generatePayOrder -> fechaActual: {}", fechaActual);
+      // TODO - Save to DB and get status and message
+      Result result = new Result("SUCCESS", "Payorder successfully generated.");
       String body =
           "{ "
-              + "\"status\": \"SUCCESS\","
-              + "\"message\": \"No message.\","
+              + "\"status\": \""
+              + result.getStatus()
+              + "\","
+              + "\"message\": \""
+              + result.getMessage()
+              + "\","
               + "\"data\": {"
               + "\"payorder_serial\":"
-              + " \"ef41d3ac-2e4f-11ed-a261-0242ac120002\","
+              + " \""
+              + uuid
+              + "\","
               + "\"competitors\": ["
               + "   {"
-              + "     \"id\": 1234,"
-              + "     \"event_datetime\": \"20/09/22 23:50:55\","
+              + "     \"id\": "
+              + json.get("numero")
+              + ","
+              + "     \"event_datetime\": \""
+              + fechaActual
+              + "\","
               + "     \"code\": \"1\","
               + "     \"price\": 4.50,"
-              + "     \"alias\": \"myAlias\""
+              + "     \"alias\": \"RuletaStellar("
+              + json.get("numero")
+              + ")\""
               + "    }"
               + "  ]"
               + "}"
