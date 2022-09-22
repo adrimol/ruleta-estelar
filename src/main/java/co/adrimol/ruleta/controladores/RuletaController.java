@@ -44,8 +44,8 @@ public class RuletaController {
                   + "      transform: translate(-50%, -50%);\n"
                   + "      }\n"
                   + "      img {\n"
-                  + "        width:100%;\n"
-                  + "        height:100%;\n"
+                  + "        width:90%;\n"
+                  + "        height:90%;\n"
                   + "      }\n"
                   + "    </style>\n"
                   + "  </head>\n"
@@ -257,6 +257,8 @@ public class RuletaController {
       JSONObject json = new JSONObject(requestEntity.getBody());
       Object uuid = json.get("id");
       log.info("generatePayOrder -> uuid: {}", uuid);
+      Object cantidad = json.get("cantidad");
+      log.info("generatePayOrder -> cantidad: {}", cantidad);
       DateFormat formatter = new SimpleDateFormat("dd/MM/yy hh:mm:ss");
       String fechaActual = formatter.format(new Date());
       log.info("generatePayOrder -> fechaActual: {}", fechaActual);
@@ -277,20 +279,22 @@ public class RuletaController {
               + "\","
               + "\"competitors\": ["
               + "   {"
+              + "     \"alias\": \"RuletaStellar("
+              + json.get("numero")
+              + ")\""
               + "     \"id\": "
               + json.get("numero")
+              + ","
+              + "     \"code\": \"RUL001\","
+              + "     \"price\": "
+              + cantidad
               + ","
               + "     \"event_datetime\": \""
               + fechaActual
               + "\","
-              + "     \"code\": \"1\","
-              + "     \"price\": 4.50,"
-              + "     \"alias\": \"RuletaStellar("
-              + json.get("numero")
-              + ")\""
               + "    }"
               + "  ]"
-              + "}"
+              + " }"
               + "}";
       log.info("generatePayOrder -> body: {}", body);
       return ResponseEntity.status(HttpStatus.OK).body(body);
