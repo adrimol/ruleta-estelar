@@ -281,7 +281,7 @@ public class RuletaController {
               + "   {"
               + "     \"alias\": \"RuletaStellar("
               + json.get("numero")
-              + ")\""
+              + ")\","
               + "     \"id\": "
               + json.get("numero")
               + ","
@@ -291,7 +291,7 @@ public class RuletaController {
               + ","
               + "     \"event_datetime\": \""
               + fechaActual
-              + "\","
+              + "\""
               + "    }"
               + "  ]"
               + " }"
