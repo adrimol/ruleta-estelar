@@ -305,6 +305,21 @@ public class RuletaController {
     }
   }
 
+  @PostMapping(path = "/iframes/number", produces = "application/json")
+  @ResponseBody
+  public ResponseEntity setRuletaNumber(RequestEntity<String> requestEntity) {
+    try {
+      log.info("confirmPayOrder -> requestEntity: {}", requestEntity);
+      JSONObject json = new JSONObject(requestEntity.getBody());
+      Object number = json.get("number");
+      log.info("generatePayOrder -> number: {}", number);
+
+      return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
+    } catch (Exception e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+    }
+  }
+
   @PostMapping(path = "/api/payorder/confirm", produces = "application/json")
   @ResponseBody
   public ResponseEntity confirmPayOrder(RequestEntity<String> requestEntity) {
