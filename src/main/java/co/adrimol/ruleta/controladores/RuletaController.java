@@ -9,6 +9,7 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -338,12 +339,12 @@ public class RuletaController {
       }
 
       Firestore db = FirestoreClient.getFirestore();
-      DocumentReference docRef = db.collection("users").document("alovelace");
+      DocumentReference docRef = db.collection("ganadores").document("alovelace");
       // Add document data  with id "alovelace" using a hashmap
       Map<String, Object> data = new HashMap<>();
-      data.put("first", "Ada");
-      data.put("last", "Lovelace");
-      data.put("born", 1815);
+      data.put("fecha", new Timestamp(System.currentTimeMillis()));
+      data.put("numero", number);
+      data.put("reportadoPor", "/api/number");
       // asynchronously write data
       ApiFuture<WriteResult> result = docRef.set(data);
       // ...
