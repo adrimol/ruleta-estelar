@@ -348,7 +348,8 @@ public class RuletaController {
 
       return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
     } catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+      log.error("setRuletaNumber Exception: {}", e.getMessage(), e);
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
     }
   }
 
