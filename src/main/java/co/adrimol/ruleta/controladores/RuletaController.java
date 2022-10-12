@@ -325,10 +325,9 @@ public class RuletaController {
       log.info("setRuletaNumber -> number: {}", number);
 
       // Use the application default credentials
-      GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
       FirebaseOptions options =
-          new FirebaseOptions.Builder()
-              .setCredentials(credentials)
+          FirebaseOptions.builder()
+              .setCredentials(GoogleCredentials.getApplicationDefault())
               .setProjectId("stellariumfirebase")
               .build();
       FirebaseApp.initializeApp(options);
