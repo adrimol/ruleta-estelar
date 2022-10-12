@@ -330,7 +330,12 @@ public class RuletaController {
               .setCredentials(GoogleCredentials.getApplicationDefault())
               .setProjectId("stellariumfirebase")
               .build();
-      FirebaseApp.initializeApp(options);
+      try {
+        FirebaseApp.getInstance();
+      } catch (IllegalStateException e) {
+        // Firebase not initialized automatically, do it manually
+        FirebaseApp.initializeApp(options);
+      }
 
       Firestore db = FirestoreClient.getFirestore();
       DocumentReference docRef = db.collection("users").document("alovelace");
