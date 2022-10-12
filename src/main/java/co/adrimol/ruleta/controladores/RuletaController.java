@@ -339,8 +339,8 @@ public class RuletaController {
       }
 
       Firestore db = FirestoreClient.getFirestore();
-      DocumentReference docRef = db.collection("ganadores").document("alovelace");
-      // Add document data  with id "alovelace" using a hashmap
+      DocumentReference docRef = db.collection("ganadores").document(actualDateToString());
+      // Add document data  with id set on previous document attr using a hashmap
       Map<String, Object> data = new HashMap<>();
       data.put("fecha", new Timestamp(System.currentTimeMillis()));
       data.put("numero", number);
@@ -356,6 +356,11 @@ public class RuletaController {
       log.error("setRuletaNumber Exception: {}", e.getMessage(), e);
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
     }
+  }
+
+  private String actualDateToString() {
+    SimpleDateFormat DateFor = new SimpleDateFormat("dd-MMM-yyyy");
+    return DateFor.format(new Date());
   }
 
   @PostMapping(path = "/api/payorder/confirm", produces = "application/json")
