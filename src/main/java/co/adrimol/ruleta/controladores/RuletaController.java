@@ -315,7 +315,7 @@ public class RuletaController {
     }
   }
 
-  @PostMapping(path = "/iframes/number", produces = "application/json")
+  @PostMapping(path = "/api/number", produces = "application/json")
   @ResponseBody
   public ResponseEntity setRuletaNumber(RequestEntity<String> requestEntity) {
     try {
