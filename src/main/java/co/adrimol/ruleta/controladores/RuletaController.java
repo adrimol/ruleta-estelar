@@ -342,7 +342,6 @@ public class RuletaController {
       }
 
     } catch (Exception e) {
-      e.printStackTrace();
       log.error("generatePayOrder -> Exception: {}", e.getMessage());
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
     }
@@ -385,7 +384,8 @@ public class RuletaController {
       }
 
     } catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+      log.error("confirmPayOrder Exception: {}", e.getMessage(), e);
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
   }
 
@@ -415,7 +415,7 @@ public class RuletaController {
 
     } catch (Exception e) {
       log.error("setRuletaNumber Exception: {}", e.getMessage(), e);
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
   }
 
