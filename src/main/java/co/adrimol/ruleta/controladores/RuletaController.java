@@ -285,7 +285,7 @@ public class RuletaController {
       data.put("fechaActual", fechaActual);
       data.put("body", requestEntity.getBody());
       data.put("address", requestEntity.getHeaders().get("X-Forwarded-For"));
-      boolean saveOk = saveData("/api/payorder/generate", data);
+      boolean saveOk = saveData("api-payorder-generate", data);
 
       if (saveOk) {
         Result result = new Result("success", "Payorder successfully generated.");
