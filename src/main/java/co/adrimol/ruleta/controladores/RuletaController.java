@@ -9,13 +9,18 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
+import io.netty.util.internal.StringUtil;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -273,45 +278,113 @@ public class RuletaController {
       DateFormat formatter = new SimpleDateFormat("dd/MM/yy hh:mm:ss");
       String fechaActual = formatter.format(new Date());
       log.info("generatePayOrder -> fechaActual: {}", fechaActual);
-      // TODO - Save to DB and get status and message
-      Result result = new Result("SUCCESS", "Payorder successfully generated.");
-      String body =
-          "{ "
-              + "\"status\": \""
-              + result.getStatus()
-              + "\","
-              + "\"message\": \""
-              + result.getMessage()
-              + "\","
-              + "\"data\": {"
-              + "\"payorder_serial\":"
-              + " \""
-              + uuid
-              + "\","
-              + "\"competitors\": ["
-              + "   {"
-              + "     \"alias\": \"RuletaStellar("
-              + json.get("numero")
-              + ")\","
-              + "     \"id\": "
-              + json.get("numero")
-              + ","
-              + "     \"code\": \"RUL001\","
-              + "     \"price\": "
-              + cantidad
-              + ","
-              + "     \"event_datetime\": \""
-              + fechaActual
-              + "\""
-              + "    }"
-              + "  ]"
-              + " }"
-              + "}";
-      log.info("generatePayOrder -> body: {}", body);
-      return ResponseEntity.status(HttpStatus.OK).body(body);
+      // Save to DB and get status and message
+      Map<String, Object> data = new HashMap<>();
+      data.put("uuid", uuid);
+      data.put("cantidad", cantidad);
+      data.put("fechaActual", fechaActual);
+      data.put("body", requestEntity.getBody());
+      data.put("address", requestEntity.getHeaders().get("X-Forwarded-For"));
+      boolean saveOk = saveData("/api/payorder/generate", data);
+
+      if (saveOk) {
+        Result result = new Result("success", "Payorder successfully generated.");
+        String body =
+            "{ "
+                + "\"status\": \""
+                + result.getStatus()
+                + "\","
+                + "\"message\": \""
+                + result.getMessage()
+                + "\","
+                + "\"data\": {"
+                + "\"payorder_serial\":"
+                + " \""
+                + uuid
+                + "\","
+                + "\"competitors\": ["
+                + "   {"
+                + "     \"alias\": \"RuletaStellar("
+                + json.get("numero")
+                + ")\","
+                + "     \"id\": "
+                + json.get("numero")
+                + ","
+                + "     \"code\": \"RUL001\","
+                + "     \"price\": "
+                + cantidad
+                + ","
+                + "     \"event_datetime\": \""
+                + fechaActual
+                + "\""
+                + "    }"
+                + "  ]"
+                + " }"
+                + "}";
+        log.info("generatePayOrder -> body: {}", body);
+        return ResponseEntity.status(HttpStatus.OK).body(body);
+      } else {
+        Result result = new Result("failed", "Payorder generation failed.");
+        String body =
+            "{ "
+                + "\"status\": \""
+                + result.getStatus()
+                + "\","
+                + "\"message\": \""
+                + result.getMessage()
+                + "\","
+                + "\"data\": {"
+                + " }"
+                + "}";
+        log.info("generatePayOrder -> body: {}", body);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body("{" + "\"status\":\"failed\"" + "}");
+      }
+
     } catch (Exception e) {
       e.printStackTrace();
       log.error("generatePayOrder -> Exception: {}", e.getMessage());
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+    }
+  }
+
+  @PostMapping(path = "/api/payorder/confirm", produces = "application/json")
+  @ResponseBody
+  public ResponseEntity confirmPayOrder(RequestEntity<String> requestEntity) {
+    try {
+      log.info("confirmPayOrder -> requestEntity: {}", requestEntity);
+      JSONObject json = new JSONObject(requestEntity.getBody());
+      Object access_token = json.get("access_token");
+      log.info("confirmPayOrder -> access_token: {}", access_token);
+      Object payorder = json.get("payorder");
+      log.info("confirmPayOrder -> payorder: {}", payorder);
+
+      String errorMessage = StringUtil.EMPTY_STRING;
+      if (Objects.isNull(access_token)) {
+        errorMessage = "Access token not found.";
+      }
+      if (Objects.isNull(payorder)) {
+        errorMessage = "Payorder not found.";
+      }
+
+      // Save to DB and get status and message
+      Map<String, Object> data = new HashMap<>();
+      data.put("access_token", access_token);
+      data.put("payorder", payorder);
+      data.put("body", requestEntity.getBody());
+      data.put("message", errorMessage);
+      data.put("address", requestEntity.getHeaders().get("X-Forwarded-For"));
+
+      boolean saveOk = saveData("/api/payorder/confirm", data);
+      if (saveOk && Strings.isEmpty(errorMessage)) {
+        return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
+      } else {
+        String body =
+            "{ " + "\"status\": \"failed\"," + "\"message\": \"" + errorMessage + "\"" + "}";
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+      }
+
+    } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
     }
   }
@@ -325,53 +398,74 @@ public class RuletaController {
       Object number = json.get("number");
       log.info("setRuletaNumber -> number: {}", number);
 
-      // Use the application default credentials
-      FirebaseOptions options =
-          FirebaseOptions.builder()
-              .setCredentials(GoogleCredentials.getApplicationDefault())
-              .setProjectId("stellariumfirebase")
-              .build();
-      try {
-        FirebaseApp.getInstance();
-      } catch (IllegalStateException e) {
-        // Firebase not initialized automatically, do it manually
-        FirebaseApp.initializeApp(options);
-      }
-
-      Firestore db = FirestoreClient.getFirestore();
-      DocumentReference docRef = db.collection("ganadores").document(actualDateToString());
-      // Add document data  with id set on previous document attr using a hashmap
       Map<String, Object> data = new HashMap<>();
       data.put("fecha", new Timestamp(System.currentTimeMillis()));
       data.put("numero", number);
-      data.put("reportadoPor", "/api/number");
-      // asynchronously write data
-      ApiFuture<WriteResult> result = docRef.set(data);
-      // ...
-      // result.get() blocks on response
-      log.info("Update time : " + result.get().getUpdateTime());
+      data.put("body", requestEntity.getBody());
+      data.put("address", requestEntity.getHeaders().get("X-Forwarded-For"));
 
-      return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
+      boolean saveOk = saveData("/api/number", data);
+
+      if (saveOk) {
+        return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
+      } else {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body("{" + "\"status\":\"failed\"" + "}");
+      }
+
     } catch (Exception e) {
       log.error("setRuletaNumber Exception: {}", e.getMessage(), e);
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
     }
   }
 
+  private boolean saveData(final String collection, final Map<String, Object> data) {
+    // Use the application default credentials
+    FirebaseOptions options = null;
+    try {
+      options =
+          FirebaseOptions.builder()
+              .setCredentials(GoogleCredentials.getApplicationDefault())
+              .setProjectId("stellariumfirebase")
+              .build();
+    } catch (IOException e) {
+      log.error("saveData IOException: {}", e.getMessage(), e);
+      throw new RuntimeException(e);
+    }
+    try {
+      FirebaseApp.getInstance();
+    } catch (IllegalStateException e) {
+      // Firebase not initialized automatically, do it manually
+      FirebaseApp.initializeApp(options);
+    }
+
+    Firestore db = FirestoreClient.getFirestore();
+    DocumentReference docRef = db.collection(collection).document(getTimestamp());
+    // Add document data  with id set on previous document attr using a hashmap
+    // asynchronously write data
+    ApiFuture<WriteResult> result = docRef.set(data);
+    // result.get() blocks on response
+    try {
+      log.info("Update time : " + result.get().getUpdateTime());
+    } catch (InterruptedException e) {
+      log.error("saveData InterruptedException: {}", e.getMessage(), e);
+      throw new RuntimeException(e);
+    } catch (ExecutionException e) {
+      log.error("saveData ExecutionException: {}", e.getMessage(), e);
+      throw new RuntimeException(e);
+    }
+
+    return result.isDone();
+  }
+
+  private String getTimestamp() {
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    return timestamp.toString();
+  }
+
   private String actualDateToString() {
     SimpleDateFormat DateFor = new SimpleDateFormat("dd-MMM-yyyy");
     return DateFor.format(new Date());
-  }
-
-  @PostMapping(path = "/api/payorder/confirm", produces = "application/json")
-  @ResponseBody
-  public ResponseEntity confirmPayOrder(RequestEntity<String> requestEntity) {
-    try {
-      log.info("confirmPayOrder -> requestEntity: {}", requestEntity);
-      return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
-    } catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
-    }
   }
 
   @PostMapping("/ruleta")
