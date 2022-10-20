@@ -384,9 +384,8 @@ public class RuletaController {
       }
 
     } catch (Exception e) {
-      log.error("confirmPayOrder Exception: {}", e.getMessage(), e);
-      throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Access token or Pay order not found", e);
+      log.error("confirmPayOrder Exception: {}", e.getMessage());
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
     }
   }
 
