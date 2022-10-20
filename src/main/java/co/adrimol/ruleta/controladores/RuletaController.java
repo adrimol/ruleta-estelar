@@ -344,7 +344,7 @@ public class RuletaController {
     } catch (Exception e) {
       e.printStackTrace();
       log.error("generatePayOrder -> Exception: {}", e.getMessage());
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
     }
   }
 
@@ -375,7 +375,7 @@ public class RuletaController {
       data.put("message", errorMessage);
       data.put("address", requestEntity.getHeaders().get("X-Forwarded-For"));
 
-      boolean saveOk = saveData("/api/payorder/confirm", data);
+      boolean saveOk = saveData("api-payorder-confirm", data);
       if (saveOk && Strings.isEmpty(errorMessage)) {
         return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
       } else {
@@ -404,7 +404,7 @@ public class RuletaController {
       data.put("body", requestEntity.getBody());
       data.put("address", requestEntity.getHeaders().get("X-Forwarded-For"));
 
-      boolean saveOk = saveData("/api/number", data);
+      boolean saveOk = saveData("api-number", data);
 
       if (saveOk) {
         return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
