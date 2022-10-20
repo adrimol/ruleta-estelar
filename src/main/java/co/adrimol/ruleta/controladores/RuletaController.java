@@ -385,7 +385,7 @@ public class RuletaController {
 
     } catch (Exception e) {
       log.error("confirmPayOrder Exception: {}", e.getMessage(), e);
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
   }
 
