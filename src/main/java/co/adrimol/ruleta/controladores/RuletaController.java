@@ -347,22 +347,20 @@ public class RuletaController {
     }
   }
 
-  @PostMapping(path = "/api/payorders/{id}/products", produces = "application/json")
+  @PostMapping(path = "/api/payorders/{payorder}/products", produces = "application/json")
   @ResponseBody
   public ResponseEntity addCompetitor(
-      RequestEntity<String> requestEntity, @PathVariable String id) {
+      RequestEntity<String> requestEntity, @PathVariable String payorder) {
     try {
       log.info("addCompetitor -> requestEntity: {}", requestEntity);
-      log.info("addCompetitor -> id: {}", id);
-      JSONObject json = new JSONObject(requestEntity.getBody());
-      Object access_token = json.get("id");
-      log.info("addCompetitor -> access_token: {}", access_token);
-      Object payorder = json.get("payorder");
       log.info("addCompetitor -> payorder: {}", payorder);
+      JSONObject json = new JSONObject(requestEntity.getBody());
+      Object id = json.get("id");
+      log.info("addCompetitor -> id: {}", id);
 
       String errorMessage = StringUtil.EMPTY_STRING;
-      if (Objects.isNull(access_token)) {
-        errorMessage = "Access token not found.";
+      if (Objects.isNull(id)) {
+        errorMessage = "Id not found.";
       }
       if (Objects.isNull(payorder)) {
         errorMessage = "Payorder not found.";
@@ -370,13 +368,13 @@ public class RuletaController {
 
       // Save to DB and get status and message
       Map<String, Object> data = new HashMap<>();
-      data.put("access_token", access_token);
+      data.put("id", id);
       data.put("payorder", payorder);
       data.put("body", requestEntity.getBody());
       data.put("message", errorMessage);
       data.put("address", requestEntity.getHeaders().get("X-Forwarded-For"));
 
-      boolean saveOk = saveData("api-payorder-confirm", data);
+      boolean saveOk = saveData("api-payorders-add", data);
       if (saveOk && Strings.isEmpty(errorMessage)) {
         return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
       } else {
@@ -387,6 +385,33 @@ public class RuletaController {
 
     } catch (Exception e) {
       log.error("addCompetitor Exception: {}", e.getMessage());
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+    }
+  }
+
+  @DeleteMapping(path = "/api/payorders/{payorder}/products", produces = "application/json")
+  @ResponseBody
+  public ResponseEntity removeCompetitor(
+      RequestEntity<String> requestEntity, @PathVariable String payorder) {
+    try {
+      log.info("removeCompetitor -> requestEntity: {}", requestEntity);
+      log.info("removeCompetitor -> payorder: {}", payorder);
+
+      // Save to DB and get status and message
+      Map<String, Object> data = new HashMap<>();
+      data.put("payorder", payorder);
+      data.put("body", requestEntity.getBody());
+
+      boolean saveOk = saveData("api-payorders-delete", data);
+      if (saveOk) {
+        return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
+      } else {
+        String body = "{ " + "\"status\": \"failed\"," + "\"message\": \"" + "N/A" + "\"" + "}";
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+      }
+
+    } catch (Exception e) {
+      log.error("removeCompetitor Exception: {}", e.getMessage());
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
     }
   }
