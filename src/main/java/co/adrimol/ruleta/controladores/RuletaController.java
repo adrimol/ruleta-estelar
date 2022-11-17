@@ -265,7 +265,7 @@ public class RuletaController {
     }
   }
 
-  @PatchMapping(path = "/api/payorder/generate", produces = "application/json")
+  @PostMapping(path = "/api/payorders", produces = "application/json")
   @ResponseBody
   public ResponseEntity generatePayOrder(RequestEntity<String> requestEntity) {
     try {
