@@ -355,7 +355,7 @@ public class RuletaController {
       log.info("addCompetitor -> requestEntity: {}", requestEntity);
       log.info("addCompetitor -> id: {}", id);
       JSONObject json = new JSONObject(requestEntity.getBody());
-      Object access_token = json.get("access_token");
+      Object access_token = json.get("id");
       log.info("addCompetitor -> access_token: {}", access_token);
       Object payorder = json.get("payorder");
       log.info("addCompetitor -> payorder: {}", payorder);
