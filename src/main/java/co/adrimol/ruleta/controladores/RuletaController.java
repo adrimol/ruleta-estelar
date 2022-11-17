@@ -440,6 +440,33 @@ public class RuletaController {
     }
   }
 
+  @DeleteMapping(path = "/api/payorders/{payorder}", produces = "application/json")
+  @ResponseBody
+  public ResponseEntity removePayorder(
+      RequestEntity<String> requestEntity, @PathVariable String payorder) {
+    try {
+      log.info("removeCompetitor -> requestEntity: {}", requestEntity);
+      log.info("removeCompetitor -> payorder: {}", payorder);
+
+      // Save to DB and get status and message
+      Map<String, Object> data = new HashMap<>();
+      data.put("payorder", payorder);
+      data.put("body", requestEntity.getBody());
+
+      boolean saveOk = saveData("api-payorders-delete", data);
+      if (saveOk) {
+        return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
+      } else {
+        String body = "{ " + "\"status\": \"failed\"," + "\"message\": \"" + "N/A" + "\"" + "}";
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+      }
+
+    } catch (Exception e) {
+      log.error("removeCompetitor Exception: {}", e.getMessage());
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+    }
+  }
+
   @DeleteMapping(
       path = "/api/payorders/{payorder}/products/{competitor}",
       produces = "application/json")
@@ -459,7 +486,7 @@ public class RuletaController {
       data.put("competitor", competitor);
       data.put("body", requestEntity.getBody());
 
-      boolean saveOk = saveData("api-payorders-delete", data);
+      boolean saveOk = saveData("api-competitors-delete", data);
       if (saveOk) {
         return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
       } else {
