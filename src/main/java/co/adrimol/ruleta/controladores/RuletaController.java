@@ -357,6 +357,11 @@ public class RuletaController {
       JSONObject json = new JSONObject(requestEntity.getBody());
       Object id = json.get("id");
       log.info("addCompetitor -> id: {}", id);
+      Object cantidad = json.get("cantidad");
+      log.info("generatePayOrder -> cantidad: {}", cantidad);
+      DateFormat formatter = new SimpleDateFormat("dd/MM/yy hh:mm:ss");
+      String fechaActual = formatter.format(new Date());
+      log.info("generatePayOrder -> fechaActual: {}", fechaActual);
 
       String errorMessage = StringUtil.EMPTY_STRING;
       if (Objects.isNull(id)) {
@@ -376,11 +381,57 @@ public class RuletaController {
 
       boolean saveOk = saveData("api-payorders-add", data);
       if (saveOk && Strings.isEmpty(errorMessage)) {
-        return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
-      } else {
+        Result result = new Result("success", "Payorder successfully added.");
         String body =
-            "{ " + "\"status\": \"failed\"," + "\"message\": \"" + errorMessage + "\"" + "}";
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+            "{ "
+                + "\"status\": \""
+                + result.getStatus()
+                + "\","
+                + "\"message\": \""
+                + result.getMessage()
+                + "\","
+                + "\"data\": {"
+                + "\"payorder_serial\":"
+                + " \""
+                + payorder
+                + "\","
+                + "\"competitors\": ["
+                + "   {"
+                + "     \"alias\": \"RuletaStellar("
+                + json.get("numero")
+                + ")\","
+                + "     \"id\": "
+                + json.get("numero")
+                + ","
+                + "     \"code\": \"RUL001\","
+                + "     \"price\": "
+                + cantidad
+                + ","
+                + "     \"event_datetime\": \""
+                + fechaActual
+                + "\""
+                + "    }"
+                + "  ]"
+                + " }"
+                + "}";
+        log.info("generatePayOrder -> body: {}", body);
+        return ResponseEntity.status(HttpStatus.OK).body(body);
+      } else {
+        Result result = new Result("failed", "Payorder generation failed.");
+        String body =
+            "{ "
+                + "\"status\": \""
+                + result.getStatus()
+                + "\","
+                + "\"message\": \""
+                + result.getMessage()
+                + "\","
+                + "\"data\": {"
+                + " }"
+                + "}";
+        log.info("generatePayOrder -> body: {}", body);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body("{" + "\"status\":\"failed\"" + "}");
       }
 
     } catch (Exception e) {
