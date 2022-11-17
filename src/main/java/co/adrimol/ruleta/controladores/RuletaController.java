@@ -440,17 +440,21 @@ public class RuletaController {
     }
   }
 
-  @DeleteMapping(path = "/api/payorders/{payorder}", produces = "application/json")
+  @DeleteMapping(path = "/api/payorders/{payorder}/products/{id}", produces = "application/json")
   @ResponseBody
   public ResponseEntity removeCompetitor(
-      RequestEntity<String> requestEntity, @PathVariable String payorder) {
+      RequestEntity<String> requestEntity,
+      @PathVariable String payorder,
+      @PathVariable String competitor) {
     try {
       log.info("removeCompetitor -> requestEntity: {}", requestEntity);
       log.info("removeCompetitor -> payorder: {}", payorder);
+      log.info("removeCompetitor -> competitor: {}", competitor);
 
       // Save to DB and get status and message
       Map<String, Object> data = new HashMap<>();
       data.put("payorder", payorder);
+      data.put("competitor", competitor);
       data.put("body", requestEntity.getBody());
 
       boolean saveOk = saveData("api-payorders-delete", data);
