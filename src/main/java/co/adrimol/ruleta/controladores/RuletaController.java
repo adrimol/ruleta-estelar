@@ -389,7 +389,7 @@ public class RuletaController {
     }
   }
 
-  @DeleteMapping(path = "/api/payorders/{payorder}/products", produces = "application/json")
+  @DeleteMapping(path = "/api/payorders/{payorder}", produces = "application/json")
   @ResponseBody
   public ResponseEntity removeCompetitor(
       RequestEntity<String> requestEntity, @PathVariable String payorder) {
