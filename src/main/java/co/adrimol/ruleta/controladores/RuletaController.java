@@ -347,7 +347,7 @@ public class RuletaController {
     }
   }
 
-  @PostMapping(path = "/api/payorder/{id}/products", produces = "application/json")
+  @PostMapping(path = "/api/payorders/{id}/products", produces = "application/json")
   @ResponseBody
   public ResponseEntity addCompetitor(
       RequestEntity<String> requestEntity, @PathVariable String id) {
