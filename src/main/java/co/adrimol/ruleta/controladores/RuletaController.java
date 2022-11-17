@@ -347,16 +347,18 @@ public class RuletaController {
     }
   }
 
-  @PostMapping(path = "/api/payorder/confirm", produces = "application/json")
+  @PostMapping(path = "/api/payorder/{id}/products", produces = "application/json")
   @ResponseBody
-  public ResponseEntity confirmPayOrder(RequestEntity<String> requestEntity) {
+  public ResponseEntity addCompetitor(
+      RequestEntity<String> requestEntity, @PathVariable String id) {
     try {
-      log.info("confirmPayOrder -> requestEntity: {}", requestEntity);
+      log.info("addCompetitor -> requestEntity: {}", requestEntity);
+      log.info("addCompetitor -> id: {}", id);
       JSONObject json = new JSONObject(requestEntity.getBody());
       Object access_token = json.get("access_token");
-      log.info("confirmPayOrder -> access_token: {}", access_token);
+      log.info("addCompetitor -> access_token: {}", access_token);
       Object payorder = json.get("payorder");
-      log.info("confirmPayOrder -> payorder: {}", payorder);
+      log.info("addCompetitor -> payorder: {}", payorder);
 
       String errorMessage = StringUtil.EMPTY_STRING;
       if (Objects.isNull(access_token)) {
@@ -384,7 +386,7 @@ public class RuletaController {
       }
 
     } catch (Exception e) {
-      log.error("confirmPayOrder Exception: {}", e.getMessage());
+      log.error("addCompetitor Exception: {}", e.getMessage());
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
     }
   }
