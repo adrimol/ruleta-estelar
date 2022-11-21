@@ -455,7 +455,8 @@ public class RuletaController {
 
       boolean saveOk = saveData("api-payorders-delete", data);
       if (saveOk) {
-        return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+            .body("{" + "\"status\":\"success\"" + "}");
       } else {
         String body = "{ " + "\"status\": \"failed\"," + "\"message\": \"" + "N/A" + "\"" + "}";
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
@@ -488,7 +489,8 @@ public class RuletaController {
 
       boolean saveOk = saveData("api-competitors-delete", data);
       if (saveOk) {
-        return ResponseEntity.status(HttpStatus.OK).body("{" + "\"status\":\"success\"" + "}");
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+            .body("{" + "\"status\":\"success\"" + "}");
       } else {
         String body = "{ " + "\"status\": \"failed\"," + "\"message\": \"" + "N/A" + "\"" + "}";
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
